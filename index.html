@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>京东红包活动</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background: #ffffff;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 顶部活动图片区域 */
+        .main-banner {
+            padding: 20px 15px 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .banner-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 12px;
+        }
+        
+        /* 核心功能区 */
+        .action-section {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 口令框样式 - 完美匹配截图 */
+        .code-container {
+            background: #fff1f2;
+            border-radius: 10px; /* 圆角调整为10px */
+            padding: 15px;
+            margin: 0px 0 0;
+            text-align: center;
+            border: 1px solid #ffe4e5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .jing-code {
+            font-size: 16px;
+            color: #e02d34;
+            text-align: center;
+            word-break: break-all;
+            line-height: 1.6;
+            -webkit-user-select: all;
+            user-select: all;
+            padding: 12px 5px;
+            font-weight: normal;
+        }
+        
+        .code-line1 {
+            font-weight: bold;
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+        
+        .code-line2 {
+            color: #333;
+            font-size: 15px;
+        }
+        
+        .emoji {
+            font-size: 18px;
+            margin-right: 3px;
+        }
+        
+        /* 复制按钮区域 */
+        .button-area {
+            display: flex;
+            flex-direction: column;
+            margin: 15px 0 0;
+            gap: 5px;
+        }
+        
+        /* 一键复制按钮 - 匹配截图中的红色 */
+        .copy-btn {
+            background: #e02d34;
+            background: linear-gradient(to bottom, #e02d34, #c30010);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 18px 0; /* 增加高度 */
+            font-size: 20px; /* 加大字体 */
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(224, 45, 52, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .copy-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 5px rgba(224, 45, 52, 0.25);
+        }
+        
+        /* 心理学提示（一行显示） */
+        .guide-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 12px;
+            flex-wrap: nowrap;
+            gap: 2px;
+            font-size: 13px; /* 减小字体大小 */
+            color: #e02d34;
+            padding: 0 10px;
+        }
+        
+        .guide-step {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .guide-divider {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 1px;
+        }
+        
+        /* 底部留白 */
+        .footer-space {
+            height: 30px;
+        }
+        
+        /* 成功提示弹窗 */
+        .success-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .popup-content {
+            background: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            width: 85%;
+            max-width: 300px;
+            animation: popIn 0.3s ease-out;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .popup-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e02d34;
+            margin-bottom: 15px;
+        }
+        
+        .popup-desc {
+            color: #666;
+            font-size: 16px;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+        
+        .auto-text {
+            color: #999;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        /* 失败弹窗 */
+        .failure-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .failure-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            width: 85%;
+            max-width: 320px;
+            animation: popIn 0.4s;
+        }
+        
+        .failure-icon {
+            font-size: 32px;
+            color: #e02d34;
+            margin-bottom: 15px;
+        }
+        
+        .failure-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e02d34;
+            margin-bottom: 15px;
+        }
+        
+        .failure-desc {
+            color: #333;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 10px 0 20px;
+        }
+        
+        .close-btn {
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .close-btn:active {
+            background: #e0e0e0;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .jing-code {
+                font-size: 15px;
+            }
+            
+            .copy-btn {
+                padding: 17px 0;
+                font-size: 19px;
+            }
+            
+            .guide-container {
+                font-size: 12.5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .jing-code {
+                font-size: 14px;
+                padding: 8px 0;
+            }
+            
+            .code-line1 {
+                font-size: 15.5px;
+            }
+            
+            .code-line2 {
+                font-size: 14px;
+            }
+            
+            .copy-btn {
+                padding: 15px 0;
+                font-size: 18px;
+            }
+            
+            .popup-title {
+                font-size: 18px;
+            }
+            
+            .popup-desc {
+                font-size: 15px;
+            }
+            
+            .failure-title {
+                font-size: 20px;
+            }
+            
+            .failure-desc {
+                font-size: 15px;
+            }
+            
+            .guide-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-height: 700px) {
+            .banner-image {
+                max-height: 45vh;
+            }
+            
+            .copy-btn {
+                padding: 15px 0;
+            }
+            
+            .guide-container {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="main-banner">
+    <img class="banner-image" src="your-image-path.jpg">
+</div>
+    
+    <!-- 核心功能区 -->
+    <div class="action-section">
+        <!-- 口令框 - 完美匹配图片设计 -->
+        <div class="code-container">
+            <!-- 口令文本 - 完美还原图片中的内容格式 -->
+            <div id="jingCode" class="jing-code">
+                <div class="code-line1">13:/抢红包，购痛快~最高25618元红包等你来！</div>
+                <div class="code-line2">→<span class="emoji">💦</span>Dǒng！NBGSu2Lp1KtLWuSn！ZH1997</div>
+            </div>
+        </div>
+        
+        <!-- 按钮区域 -->
+        <div class="button-area">
+            <!-- 一键复制按钮 -->
+            <button id="copyBtn" class="copy-btn">一键复制</button>
+            
+            <!-- 心理学提示（一行显示） -->
+            <div class="guide-container">
+                <span class="guide-step">长按口令</span>
+                <span class="guide-divider">→</span>
+                <span class="guide-step">全选</span>
+                <span class="guide-divider">→</span>
+                <span class="guide-step">复制</span>
+                <span class="guide-divider">→</span>
+                <span class="guide-step">打开手机京东</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部留白 -->
+    <div class="footer-space"></div>
+    
+    <!-- 成功提示弹窗 -->
+    <div class="success-popup" id="successPopup">
+        <div class="popup-content">
+            <div class="popup-title">复制成功!</div>
+            <div class="popup-desc">京口令已保存到剪贴板</div>
+            <div class="popup-desc">请打开京东APP使用</div>
+            <div class="auto-text">本提示3秒后自动关闭</div>
+        </div>
+    </div>
+    
+    <!-- 失败弹窗 -->
+    <div class="failure-popup" id="failurePopup">
+        <div class="failure-content">
+            <div class="failure-icon">⚠️</div>
+            <div class="failure-title">复制失败</div>
+            <div class="failure-desc">很抱歉，自动复制功能出现异常</div>
+            <div class="failure-desc">请您手动进行复制操作：</div>
+            <div class="failure-desc">长按口令 → 全选 → 复制 → 打开手机京东</div>
+            
+            <button class="close-btn">去手动复制</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const copyBtn = document.getElementById('copyBtn');
+            const successPopup = document.getElementById('successPopup');
+            const failurePopup = document.getElementById('failurePopup');
+            
+            // 原始口令文本（完美匹配图片内容）
+            const jingCodeText = "13:/抢红包，购痛快~最高25618元红包等你来！→💦Dǒng！NBGSu2Lp1KtLWuSn！ZH1997";
+            
+            // 复制功能实现
+            copyBtn.addEventListener('click', copyCode);
+            
+            // 点击弹窗背景关闭
+            successPopup.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    successPopup.style.display = 'none';
+                }
+            });
+            
+            failurePopup.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    failurePopup.style.display = 'none';
+                }
+            });
+            
+            // 点击"去手动复制"按钮
+            document.querySelector('.close-btn').addEventListener('click', function() {
+                failurePopup.style.display = 'none';
+            });
+            
+            // 文本复制功能
+            function copyCode() {
+                try {
+                    // 尝试现代浏览器API
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(jingCodeText)
+                            .then(function() {
+                                showSuccess();
+                            })
+                            .catch(function() {
+                                showFailure();
+                            });
+                        return;
+                    }
+                    
+                    // 传统复制方法
+                    fallbackToLegacyCopy(jingCodeText);
+                    
+                } catch (error) {
+                    showFailure();
+                }
+            }
+            
+            // 传统复制方式
+            function fallbackToLegacyCopy(text) {
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    textArea.style.cssText = 'position:absolute;left:-9999px;opacity:0.01;';
+                    
+                    document.body.appendChild(textArea);
+                    
+                    // iOS特殊处理
+                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        const range = document.createRange();
+                        range.selectNodeContents(textArea);
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                        textArea.setSelectionRange(0, text.length);
+                    } else {
+                        textArea.select();
+                    }
+                    
+                    // 执行复制
+                    if (document.execCommand('copy')) {
+                        showSuccess();
+                    } else {
+                        showFailure();
+                    }
+                    
+                    document.body.removeChild(textArea);
+                    
+                } catch (err) {
+                    showFailure();
+                }
+            }
+            
+            // 显示成功提示
+            function showSuccess() {
+                successPopup.style.display = 'flex';
+                
+                // 3秒后自动关闭
+                setTimeout(function() {
+                    successPopup.style.display = 'none';
+                }, 3000);
+            }
+            
+            // 显示失败提示
+            function showFailure() {
+                failurePopup.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>
